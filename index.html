@@ -11,10 +11,10 @@
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg: #FAFAF7;
+    --bg: #F5F5F0;
     --card: #FFFFFF;
     --text: #1A1A1A;
-    --muted: #6B6B6B;
+    --muted: #595959;
     --accent: #2D5A27;
     --accent-light: #E8F0E6;
     --accent-hover: #1E3D1A;
@@ -189,7 +189,18 @@
     margin-top: 20px;
     font-size: 0.75rem;
     color: var(--muted);
-    opacity: 0.6;
+  }
+
+  /* Focus visible for keyboard nav */
+  .option:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+  .btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   /* Debug panel - hidden by default, show with ?debug=1 */
@@ -212,91 +223,93 @@
 </head>
 <body>
 
-<div class="container">
-  <div class="progress-wrap">
-    <div class="progress-dot active" id="dot-0"></div>
-    <div class="progress-dot" id="dot-1"></div>
-    <div class="progress-dot" id="dot-2"></div>
-  </div>
+<main class="container">
+  <nav aria-label="Survey progress">
+    <div class="progress-wrap" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="3" id="progress-bar">
+      <div class="progress-dot active" id="dot-0"></div>
+      <div class="progress-dot" id="dot-1"></div>
+      <div class="progress-dot" id="dot-2"></div>
+    </div>
+  </nav>
 
-  <div class="card">
+  <div class="card" aria-live="polite">
 
     <!-- STEP 0: Intro -->
-    <div class="step active" id="step-0">
+    <section class="step active" id="step-0" aria-label="Introduction">
       <div class="step-label">Quick Survey</div>
       <h1>Help us improve your experience</h1>
       <p class="subtitle">Answer 2 quick questions about your shopping habits. Takes less than 30 seconds. Your responses are anonymous.</p>
       <button class="btn btn-primary" onclick="goToStep(1)">Start Survey</button>
-    </div>
+    </section>
 
     <!-- STEP 1: Question 1 -->
-    <div class="step" id="step-1">
-      <div class="step-label">Question 1 of 2</div>
-      <p class="question-text">How often do you shop online?</p>
-      <div class="options" id="q1-options">
-        <div class="option" onclick="selectOption(1, this, 'daily')">
-          <div class="option-radio"></div>
+    <section class="step" id="step-1" aria-label="Question 1 of 2">
+      <div class="step-label" aria-hidden="true">Question 1 of 2</div>
+      <p class="question-text" id="q1-label">How often do you shop online?</p>
+      <div class="options" id="q1-options" role="radiogroup" aria-labelledby="q1-label">
+        <div class="option" role="radio" aria-checked="false" tabindex="0" onclick="selectOption(1, this, 'daily')" onkeydown="handleOptionKey(event, 1, this, 'daily')">
+          <div class="option-radio" aria-hidden="true"></div>
           <span>Daily</span>
         </div>
-        <div class="option" onclick="selectOption(1, this, 'weekly')">
-          <div class="option-radio"></div>
+        <div class="option" role="radio" aria-checked="false" tabindex="-1" onclick="selectOption(1, this, 'weekly')" onkeydown="handleOptionKey(event, 1, this, 'weekly')">
+          <div class="option-radio" aria-hidden="true"></div>
           <span>A few times a week</span>
         </div>
-        <div class="option" onclick="selectOption(1, this, 'monthly')">
-          <div class="option-radio"></div>
+        <div class="option" role="radio" aria-checked="false" tabindex="-1" onclick="selectOption(1, this, 'monthly')" onkeydown="handleOptionKey(event, 1, this, 'monthly')">
+          <div class="option-radio" aria-hidden="true"></div>
           <span>A few times a month</span>
         </div>
-        <div class="option" onclick="selectOption(1, this, 'rarely')">
-          <div class="option-radio"></div>
+        <div class="option" role="radio" aria-checked="false" tabindex="-1" onclick="selectOption(1, this, 'rarely')" onkeydown="handleOptionKey(event, 1, this, 'rarely')">
+          <div class="option-radio" aria-hidden="true"></div>
           <span>Rarely</span>
         </div>
       </div>
       <button class="btn btn-primary" id="btn-q1" disabled onclick="goToStep(2)">Next</button>
-    </div>
+    </section>
 
     <!-- STEP 2: Question 2 -->
-    <div class="step" id="step-2">
-      <div class="step-label">Question 2 of 2</div>
-      <p class="question-text">What matters most when choosing where to shop?</p>
-      <div class="options" id="q2-options">
-        <div class="option" onclick="selectOption(2, this, 'price')">
-          <div class="option-radio"></div>
+    <section class="step" id="step-2" aria-label="Question 2 of 2">
+      <div class="step-label" aria-hidden="true">Question 2 of 2</div>
+      <p class="question-text" id="q2-label">What matters most when choosing where to shop?</p>
+      <div class="options" id="q2-options" role="radiogroup" aria-labelledby="q2-label">
+        <div class="option" role="radio" aria-checked="false" tabindex="0" onclick="selectOption(2, this, 'price')" onkeydown="handleOptionKey(event, 2, this, 'price')">
+          <div class="option-radio" aria-hidden="true"></div>
           <span>Best price</span>
         </div>
-        <div class="option" onclick="selectOption(2, this, 'speed')">
-          <div class="option-radio"></div>
+        <div class="option" role="radio" aria-checked="false" tabindex="-1" onclick="selectOption(2, this, 'speed')" onkeydown="handleOptionKey(event, 2, this, 'speed')">
+          <div class="option-radio" aria-hidden="true"></div>
           <span>Fast delivery</span>
         </div>
-        <div class="option" onclick="selectOption(2, this, 'quality')">
-          <div class="option-radio"></div>
+        <div class="option" role="radio" aria-checked="false" tabindex="-1" onclick="selectOption(2, this, 'quality')" onkeydown="handleOptionKey(event, 2, this, 'quality')">
+          <div class="option-radio" aria-hidden="true"></div>
           <span>Product quality</span>
         </div>
-        <div class="option" onclick="selectOption(2, this, 'reviews')">
-          <div class="option-radio"></div>
+        <div class="option" role="radio" aria-checked="false" tabindex="-1" onclick="selectOption(2, this, 'reviews')" onkeydown="handleOptionKey(event, 2, this, 'reviews')">
+          <div class="option-radio" aria-hidden="true"></div>
           <span>Customer reviews</span>
         </div>
       </div>
       <button class="btn btn-primary" id="btn-q2" disabled onclick="submitSurvey()">Submit</button>
-    </div>
+    </section>
 
     <!-- STEP 3: Thank you -->
-    <div class="step" id="step-3">
-      <div class="checkmark">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <section class="step" id="step-3" aria-label="Survey complete">
+      <div class="checkmark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <polyline points="20 6 9 17 4 12"></polyline>
         </svg>
       </div>
       <h1>Thank you!</h1>
       <p class="subtitle">Your responses have been recorded. We appreciate your time.</p>
-    </div>
+    </section>
 
   </div>
 
-  <div class="footer">Survey Research Project &middot; 2026</div>
+  <footer class="footer">Survey Research Project &middot; 2026</footer>
 
   <!-- Debug panel -->
-  <div class="debug-panel" id="debug-panel"></div>
-</div>
+  <div class="debug-panel" id="debug-panel" aria-hidden="true"></div>
+</main>
 
 <script>
 (function() {
@@ -579,14 +592,38 @@
 
   window.selectOption = function(question, el, value) {
     const parent = el.parentElement;
-    parent.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    parent.querySelectorAll('.option').forEach(function(o) {
+      o.classList.remove('selected');
+      o.setAttribute('aria-checked', 'false');
+      o.setAttribute('tabindex', '-1');
+    });
     el.classList.add('selected');
+    el.setAttribute('aria-checked', 'true');
+    el.setAttribute('tabindex', '0');
+    el.focus();
     answers['q' + question] = value;
     detection.answers['q' + question] = value;
     document.getElementById('btn-q' + question).disabled = false;
 
     debugLog('answer q' + question + ' = ' + value);
     sendData('answer_q' + question);
+  };
+
+  window.handleOptionKey = function(e, question, el, value) {
+    var options = Array.from(el.parentElement.children);
+    var idx = options.indexOf(el);
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      var next = options[(idx + 1) % options.length];
+      next.click();
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      var prev = options[(idx - 1 + options.length) % options.length];
+      prev.click();
+    } else if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      selectOption(question, el, value);
+    }
   };
 
   window.goToStep = function(step) {
@@ -625,6 +662,7 @@
     for (let i = 0; i <= step; i++) {
       document.getElementById('dot-' + i).classList.add('active');
     }
+    document.getElementById('progress-bar').setAttribute('aria-valuenow', step + 1);
 
     detection.steps_reached.push(step);
     detection.step_timestamps[step] = new Date().toISOString();
