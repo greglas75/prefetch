@@ -11,15 +11,17 @@
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg: #F5F5F0;
+    --bg: #F5F3F7;
     --card: #FFFFFF;
     --text: #1A1A1A;
     --muted: #595959;
-    --accent: #2D5A27;
-    --accent-light: #E8F0E6;
-    --accent-hover: #1E3D1A;
-    --border: #E5E5E0;
-    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
+    --accent: #7B2D8E;
+    --accent-light: #F3E5F5;
+    --accent-hover: #5E1A6E;
+    --cta: #E91E63;
+    --cta-hover: #C2185B;
+    --border: #E0D8E5;
+    --shadow: 0 1px 3px rgba(123,45,142,0.06), 0 4px 12px rgba(123,45,142,0.08);
     --radius: 12px;
   }
 
@@ -163,10 +165,10 @@
     -webkit-tap-highlight-color: transparent;
   }
   .btn-primary {
-    background: var(--accent);
+    background: var(--cta);
     color: #fff;
   }
-  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-primary:hover { background: var(--cta-hover); }
   .btn-primary:disabled {
     background: var(--border);
     color: var(--muted);
