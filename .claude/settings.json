@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep",
+      "Bash(node server.js)",
+      "Bash(node setup_db.js)",
+      "Bash(git *)",
+      "Bash(supabase *)",
+      "Bash(kill *)",
+      "Bash(lsof *)",
+      "Bash(curl *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(npm install *)",
+      "Bash(npx *)"
+    ]
+  }
+}

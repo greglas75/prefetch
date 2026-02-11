@@ -1,50 +1,57 @@
 # Prefetch Detection Project
 
 ## Overview
-Facebook prefetch detection system. Tracks whether page loads are real user visits or Facebook WebView prefetches. Deployed on Vercel, data stored in Supabase.
+Facebook prefetch detection system. Tracks whether page loads are real user visits or Facebook WebView prefetches. Single-page vanilla JS app + Node.js local server. Deployed on Vercel, data stored in Supabase.
 
 ## Architecture
-- `index.html` — Single-page survey (vanilla JS, no framework). Serves as both UI and tracking client.
-- `server.js` — Local Node.js HTTP server (port 4567). Writes to local JSONL files + serves HTML.
-- Supabase (remote) — PostgreSQL backend for production data from Vercel deployment.
+```
+index.html  →  Single file: HTML + CSS + JS (no framework, no build step)
+server.js   →  Local Node.js HTTP server (port 4567, built-in modules only)
+Supabase    →  Remote PostgreSQL for production data (Vercel deployment)
+```
 
 ## URLs
-- **Production:** https://startsurvey.vercel.app/
-- **Local:** http://localhost:4567/
-- **Dashboard:** http://localhost:4567/dashboard
-- **Debug mode:** http://localhost:4567/?debug=1
-- **GitHub:** https://github.com/greglas75/prefetch
-- **Supabase project:** dpdzicoybbjlxhwxnpxu (region: ap-southeast-1)
+| Environment | URL |
+|-------------|-----|
+| Production | https://startsurvey.vercel.app/ |
+| Local | http://localhost:4567/ |
+| Debug mode | http://localhost:4567/?debug=1 |
+| Dashboard | http://localhost:4567/dashboard |
+| GitHub | https://github.com/greglas75/prefetch |
+
+## Quick Start
+```bash
+node server.js    # starts on http://localhost:4567/
+```
 
 ## Data Flow
-1. Client sends lightweight heartbeats every 150ms (local) / 2s (Supabase)
-2. Full event payloads sent on: `page_init`, `page_load`, `first_visible`, `step_*`, `answer_*`, `page_close`
-3. Local server buffers heartbeats in memory, flushes to `heartbeats.jsonl` every 2s
-4. Full events written to `collected_data.jsonl` (local) and `events` table (Supabase)
-
-## Supabase Tables
-- `events` — Full detection payloads (session_id, trigger, data JSONB)
-- `heartbeats` — Lightweight pulses (session_id, step, screen_ms, visibility, etc.)
-- RLS enabled: anon INSERT allowed, no SELECT/UPDATE/DELETE for anon
-
-## Color Scheme (TGM Panel)
-- Accent (purple): `#7B2D8E`
-- CTA buttons (pink): `#E91E63`
-- Background: `#F5F3F7`
-- Text: `#1A1A1A`
-- Muted: `#595959`
-
-## Running Locally
-```bash
-node server.js
-# Opens on http://localhost:4567/
 ```
+Browser → sendBeacon(/collect)  → server.js → collected_data.jsonl (local)
+Browser → fetch(Supabase REST)  → Supabase  → events / heartbeats tables
+```
+- Lightweight heartbeats: every 150ms (local) / 2s (Supabase)
+- Full payloads: on `page_init`, `page_load`, `first_visible`, `step_*`, `answer_*`, `page_close`
+
+## Supabase
+- Project ref: `dpdzicoybbjlxhwxnpxu` (ap-southeast-1)
+- Tables: `events` (full payloads), `heartbeats` (lightweight pulses)
+- RLS: anon INSERT only. Service role for admin scripts only.
 
 ## Key Files
 | File | Purpose |
 |------|---------|
-| `index.html` | Survey UI + all tracking JS (single file) |
-| `server.js` | Local HTTP server + dashboard + data collection |
-| `setup_db.js` | Supabase table verification script |
-| `collected_data.jsonl` | Local full event log (gitignored) |
-| `heartbeats.jsonl` | Local heartbeat log (gitignored) |
+| `index.html` | Survey UI + all tracking JS |
+| `server.js` | Local HTTP server + dashboard |
+| `setup_db.js` | Supabase table verification |
+| `.claude/rules/` | Modular project rules |
+
+## Rules
+All project rules are in `.claude/rules/` organized by topic:
+- `architecture.md` — project structure, no-framework constraint
+- `performance.md` — 100ms first-data requirement, heartbeat timing
+- `tracking.md` — detection fields, screen timing, sync checklist
+- `accessibility.md` — WCAG AA, Lighthouse 100 target
+- `colors.md` — TGM Panel color scheme (locked)
+- `supabase.md` — tables, RLS, keys
+- `security.md` — what's public, what's secret
+- `deployment.md` — Git, Vercel, checklist
