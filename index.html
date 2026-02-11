@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick Survey - Win a $50 Gift Card</title>
+<meta property="og:title" content="Quick Survey - Win a $50 Gift Card">
+<meta property="og:description" content="Answer 2 quick questions and enter to win a $50 Amazon gift card!">
+<meta property="og:type" content="website">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:wght@600;700&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #FAFAF7;
+    --card: #FFFFFF;
+    --text: #1A1A1A;
+    --muted: #6B6B6B;
+    --accent: #2D5A27;
+    --accent-light: #E8F0E6;
+    --accent-hover: #1E3D1A;
+    --border: #E5E5E0;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
+    --radius: 12px;
+  }
+
+  html { font-size: 16px; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 480px;
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 32px;
+  }
+  .progress-dot {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    transition: background 0.4s ease;
+  }
+  .progress-dot.active {
+    background: var(--accent);
+  }
+
+  /* Card */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 36px 32px;
+    box-shadow: var(--shadow);
+  }
+
+  /* Steps */
+  .step {
+    display: none;
+    animation: fadeUp 0.35s ease forwards;
+  }
+  .step.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Typography */
+  .step-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.65rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+  .subtitle {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.55;
+    margin-bottom: 28px;
+  }
+
+  /* Question text */
+  .question-text {
+    font-family: 'Fraunces', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.35;
+    margin-bottom: 22px;
+  }
+
+  /* Options */
+  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .option:hover { border-color: var(--accent); background: var(--accent-light); }
+  .option.selected { border-color: var(--accent); background: var(--accent-light); }
+  .option-radio {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: border-color 0.2s ease;
+  }
+  .option.selected .option-radio { border-color: var(--accent); }
+  .option.selected .option-radio::after {
+    content: '';
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 14px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-primary:disabled {
+    background: var(--border);
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+
+  /* Thank you */
+  .checkmark {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--accent-light);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+  }
+  .checkmark svg { width: 28px; height: 28px; color: var(--accent); }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.75rem;
+    color: var(--muted);
+    opacity: 0.6;
+  }
+
+  /* Debug panel - hidden by default, show with ?debug=1 */
+  .debug-panel {
+    display: none;
+    margin-top: 16px;
+    padding: 16px;
+    background: #1a1a1a;
+    color: #00ff88;
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    border-radius: var(--radius);
+    line-height: 1.6;
+    max-height: 300px;
+    overflow-y: auto;
+    word-break: break-all;
+  }
+  .debug-panel.visible { display: block; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="progress-wrap">
+    <div class="progress-dot active" id="dot-0"></div>
+    <div class="progress-dot" id="dot-1"></div>
+    <div class="progress-dot" id="dot-2"></div>
+  </div>
+
+  <div class="card">
+
+    <!-- STEP 0: Intro -->
+    <div class="step active" id="step-0">
+      <div class="step-label">Quick Survey</div>
+      <h1>Help us improve your experience</h1>
+      <p class="subtitle">Answer 2 quick questions about your shopping habits. Takes less than 30 seconds. Your responses are anonymous.</p>
+      <button class="btn btn-primary" onclick="goToStep(1)">Start Survey</button>
+    </div>
+
+    <!-- STEP 1: Question 1 -->
+    <div class="step" id="step-1">
+      <div class="step-label">Question 1 of 2</div>
+      <p class="question-text">How often do you shop online?</p>
+      <div class="options" id="q1-options">
+        <div class="option" onclick="selectOption(1, this, 'daily')">
+          <div class="option-radio"></div>
+          <span>Daily</span>
+        </div>
+        <div class="option" onclick="selectOption(1, this, 'weekly')">
+          <div class="option-radio"></div>
+          <span>A few times a week</span>
+        </div>
+        <div class="option" onclick="selectOption(1, this, 'monthly')">
+          <div class="option-radio"></div>
+          <span>A few times a month</span>
+        </div>
+        <div class="option" onclick="selectOption(1, this, 'rarely')">
+          <div class="option-radio"></div>
+          <span>Rarely</span>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btn-q1" disabled onclick="goToStep(2)">Next</button>
+    </div>
+
+    <!-- STEP 2: Question 2 -->
+    <div class="step" id="step-2">
+      <div class="step-label">Question 2 of 2</div>
+      <p class="question-text">What matters most when choosing where to shop?</p>
+      <div class="options" id="q2-options">
+        <div class="option" onclick="selectOption(2, this, 'price')">
+          <div class="option-radio"></div>
+          <span>Best price</span>
+        </div>
+        <div class="option" onclick="selectOption(2, this, 'speed')">
+          <div class="option-radio"></div>
+          <span>Fast delivery</span>
+        </div>
+        <div class="option" onclick="selectOption(2, this, 'quality')">
+          <div class="option-radio"></div>
+          <span>Product quality</span>
+        </div>
+        <div class="option" onclick="selectOption(2, this, 'reviews')">
+          <div class="option-radio"></div>
+          <span>Customer reviews</span>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btn-q2" disabled onclick="submitSurvey()">Submit</button>
+    </div>
+
+    <!-- STEP 3: Thank you -->
+    <div class="step" id="step-3">
+      <div class="checkmark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <h1>Thank you!</h1>
+      <p class="subtitle">Your responses have been recorded. We appreciate your time.</p>
+    </div>
+
+  </div>
+
+  <div class="footer">Survey Research Project &middot; 2026</div>
+
+  <!-- Debug panel -->
+  <div class="debug-panel" id="debug-panel"></div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ============================================================
+  // CONFIGURATION
+  // ============================================================
+  // Change this to your actual collection endpoint
+  const COLLECT_URL = '/collect';
+
+  // Show debug panel if ?debug=1 in URL
+  const params = new URLSearchParams(window.location.search);
+  const DEBUG = params.get('debug') === '1';
+  if (DEBUG) document.getElementById('debug-panel').classList.add('visible');
+
+  // ============================================================
+  // SESSION & DETECTION DATA
+  // ============================================================
+  const sessionId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substr(2);
+  const pageLoadTime = Date.now();
+
+  // Core detection object — this is what we're here for
+  const detection = {
+    session_id: sessionId,
+    page_load_ts: new Date().toISOString(),
+    page_load_epoch: pageLoadTime,
+
+    // Prefetch detection signals
+    visibility_on_load: document.visibilityState,
+    has_focus_on_load: document.hasFocus(),
+    hidden_on_load: document.hidden,
+
+    // Document state
+    ready_state_on_load: document.readyState,
+
+    // Environment
+    user_agent: navigator.userAgent,
+    platform: navigator.platform || 'unknown',
+    viewport_w: window.innerWidth,
+    viewport_h: window.innerHeight,
+    screen_w: screen.width,
+    screen_h: screen.height,
+    device_pixel_ratio: window.devicePixelRatio,
+    connection_type: (navigator.connection && navigator.connection.effectiveType) || 'unknown',
+    connection_downlink: (navigator.connection && navigator.connection.downlink) || 'unknown',
+
+    // iframe detection
+    is_iframe: window.self !== window.top,
+
+    // Referrer
+    referrer: document.referrer,
+
+    // Facebook detection
+    is_facebook_webview: /FBAN|FBAV|FB_IAB|FBIOS|FBANDROID/.test(navigator.userAgent),
+    is_instagram_webview: /Instagram/.test(navigator.userAgent),
+
+    // Prefetch headers (we can't read request headers in JS, but we can check performance API)
+    navigation_type: (performance && performance.getEntriesByType && performance.getEntriesByType('navigation')[0])
+      ? performance.getEntriesByType('navigation')[0].type
+      : 'unknown',
+
+    // Interaction tracking
+    first_interaction_type: null,
+    first_interaction_ts: null,
+    first_interaction_delay_ms: null,
+    had_any_interaction: false,
+    total_clicks: 0,
+    total_scrolls: 0,
+    total_touches: 0,
+    total_mousemoves: 0,
+    total_keydowns: 0,
+
+    // Visibility tracking
+    visibility_changes: [],
+    became_visible_ts: null,
+    became_visible_delay_ms: null,
+    was_ever_visible: document.visibilityState === 'visible',
+
+    // Focus tracking
+    focus_events: [],
+    first_focus_ts: null,
+    first_focus_delay_ms: null,
+
+    // Survey progress
+    steps_reached: [0],
+    answers: {},
+    step_timestamps: { 0: new Date().toISOString() },
+    current_step: 0,
+    screen_enter_ms: { 0: pageLoadTime },       // Date.now() when each screen was entered
+    screen_durations_ms: {},                      // total ms spent on each screen
+    screen_visits: { 0: [{ enter: pageLoadTime, exit: null }] },  // full visit log per screen
+    completed: false,
+
+    // Will be computed on send
+    time_on_page_ms: 0,
+    time_to_first_interaction_ms: null
+  };
+
+  // ============================================================
+  // INTERACTION LISTENERS
+  // ============================================================
+  function recordInteraction(type) {
+    const now = Date.now();
+    if (!detection.had_any_interaction) {
+      detection.had_any_interaction = true;
+      detection.first_interaction_type = type;
+      detection.first_interaction_ts = new Date().toISOString();
+      detection.first_interaction_delay_ms = now - pageLoadTime;
+    }
+  }
+
+  const interactionEvents = {
+    'click': () => { detection.total_clicks++; recordInteraction('click'); },
+    'scroll': () => { detection.total_scrolls++; recordInteraction('scroll'); },
+    'touchstart': () => { detection.total_touches++; recordInteraction('touch'); },
+    'mousemove': () => { detection.total_mousemoves++; recordInteraction('mousemove'); },
+    'keydown': () => { detection.total_keydowns++; recordInteraction('keydown'); }
+  };
+
+  Object.entries(interactionEvents).forEach(([event, handler]) => {
+    document.addEventListener(event, handler, { passive: true });
+  });
+
+  // ============================================================
+  // VISIBILITY CHANGE TRACKING
+  // ============================================================
+  document.addEventListener('visibilitychange', () => {
+    const now = Date.now();
+    const state = document.visibilityState;
+    detection.visibility_changes.push({
+      state: state,
+      ts: new Date().toISOString(),
+      delay_ms: now - pageLoadTime
+    });
+
+    if (state === 'visible' && !detection.was_ever_visible) {
+      detection.was_ever_visible = true;
+      detection.became_visible_ts = new Date().toISOString();
+      detection.became_visible_delay_ms = now - pageLoadTime;
+    }
+
+    debugLog('visibility: ' + state);
+  });
+
+  // ============================================================
+  // FOCUS TRACKING
+  // ============================================================
+  window.addEventListener('focus', () => {
+    const now = Date.now();
+    detection.focus_events.push({
+      type: 'focus',
+      ts: new Date().toISOString(),
+      delay_ms: now - pageLoadTime
+    });
+    if (!detection.first_focus_ts) {
+      detection.first_focus_ts = new Date().toISOString();
+      detection.first_focus_delay_ms = now - pageLoadTime;
+    }
+    debugLog('window focus');
+  });
+
+  window.addEventListener('blur', () => {
+    detection.focus_events.push({
+      type: 'blur',
+      ts: new Date().toISOString(),
+      delay_ms: Date.now() - pageLoadTime
+    });
+    debugLog('window blur');
+  });
+
+  // ============================================================
+  // PERFORMANCE OBSERVER - track resource loading
+  // ============================================================
+  if (window.PerformanceObserver) {
+    try {
+      const navEntry = performance.getEntriesByType('navigation')[0];
+      if (navEntry) {
+        detection.perf_navigation = {
+          type: navEntry.type,
+          redirect_count: navEntry.redirectCount,
+          transfer_size: navEntry.transferSize,
+          dom_complete: Math.round(navEntry.domComplete),
+          load_event_end: Math.round(navEntry.loadEventEnd),
+          response_start: Math.round(navEntry.responseStart)
+        };
+      }
+    } catch(e) {}
+  }
+
+  // ============================================================
+  // DATA COLLECTION / SENDING
+  // ============================================================
+
+  // Lightweight heartbeat — minimal payload, ~100 bytes
+  function sendHeartbeat() {
+    const now = Date.now();
+    const cs = detection.current_step;
+    const enterTime = detection.screen_enter_ms[cs] || now;
+    const accumulated = detection.screen_durations_ms[cs] || 0;
+
+    const pulse = {
+      t: 'hb',
+      sid: sessionId,
+      ts: now,
+      ms: now - pageLoadTime,
+      step: cs,
+      scr_ms: accumulated + (now - enterTime),
+      vis: document.visibilityState,
+      foc: document.hasFocus(),
+      int: detection.had_any_interaction,
+      clk: detection.total_clicks,
+      tch: detection.total_touches
+    };
+
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(COLLECT_URL, new Blob([JSON.stringify(pulse)], { type: 'application/json' }));
+    }
+  }
+
+  // Full payload — all detection data, sent only on key events
+  function sendData(trigger) {
+    const now = Date.now();
+    detection.time_on_page_ms = now - pageLoadTime;
+    detection.send_trigger = trigger;
+
+    // Snapshot current screen duration
+    const cs = detection.current_step;
+    if (cs !== null && detection.screen_enter_ms[cs]) {
+      const liveDuration = now - detection.screen_enter_ms[cs];
+      const accumulated = detection.screen_durations_ms[cs] || 0;
+      detection.screen_time_current_ms = { step: cs, elapsed_ms: accumulated + liveDuration };
+    }
+
+    const payload = JSON.stringify(detection);
+
+    debugLog('SEND [' + trigger + ']');
+
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(COLLECT_URL, new Blob([payload], { type: 'application/json' }));
+    } else {
+      fetch(COLLECT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload,
+        keepalive: true
+      }).catch(() => {});
+    }
+  }
+
+  // ============================================================
+  // SEND SCHEDULE
+  // ============================================================
+
+  // Immediate — capture prefetch state before anything else
+  sendData('page_init');
+
+  // On full load
+  window.addEventListener('load', () => sendData('page_load'));
+
+  // When page becomes visible for the first time
+  document.addEventListener('visibilitychange', function onceVisible() {
+    if (document.visibilityState === 'visible') {
+      sendData('first_visible');
+      document.removeEventListener('visibilitychange', onceVisible);
+    }
+  });
+
+  // On page unload / close — full data
+  window.addEventListener('pagehide', () => sendData('page_close'));
+  window.addEventListener('beforeunload', () => sendData('before_unload'));
+
+  // Aggressive lightweight heartbeat every 150ms
+  setInterval(sendHeartbeat, 150);
+
+  // ============================================================
+  // SURVEY LOGIC
+  // ============================================================
+  const answers = {};
+
+  window.selectOption = function(question, el, value) {
+    const parent = el.parentElement;
+    parent.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    answers['q' + question] = value;
+    detection.answers['q' + question] = value;
+    document.getElementById('btn-q' + question).disabled = false;
+
+    debugLog('answer q' + question + ' = ' + value);
+    sendData('answer_q' + question);
+  };
+
+  window.goToStep = function(step) {
+    const now = Date.now();
+    const prevStep = detection.current_step;
+
+    // Close out the previous screen timing
+    if (prevStep !== null) {
+      const enterTime = detection.screen_enter_ms[prevStep];
+      const duration = now - enterTime;
+
+      // Accumulate total duration for this screen
+      if (!detection.screen_durations_ms[prevStep]) detection.screen_durations_ms[prevStep] = 0;
+      detection.screen_durations_ms[prevStep] += duration;
+
+      // Mark exit on last visit record
+      const visits = detection.screen_visits[prevStep];
+      if (visits && visits.length > 0) {
+        visits[visits.length - 1].exit = now;
+        visits[visits.length - 1].duration_ms = duration;
+      }
+
+      debugLog('screen ' + prevStep + ' duration: ' + duration + 'ms');
+    }
+
+    // Start timing the new screen
+    detection.current_step = step;
+    detection.screen_enter_ms[step] = now;
+    if (!detection.screen_visits[step]) detection.screen_visits[step] = [];
+    detection.screen_visits[step].push({ enter: now, exit: null });
+
+    // Existing logic
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step-' + step).classList.add('active');
+
+    for (let i = 0; i <= step; i++) {
+      document.getElementById('dot-' + i).classList.add('active');
+    }
+
+    detection.steps_reached.push(step);
+    detection.step_timestamps[step] = new Date().toISOString();
+
+    debugLog('step ' + step);
+    sendData('step_' + step);
+  };
+
+  window.submitSurvey = function() {
+    detection.completed = true;
+    goToStep(3);
+    sendData('survey_complete');
+  };
+
+  // ============================================================
+  // DEBUG LOGGING
+  // ============================================================
+  function debugLog(msg) {
+    if (!DEBUG) return;
+    const panel = document.getElementById('debug-panel');
+    const time = ((Date.now() - pageLoadTime) / 1000).toFixed(2);
+    panel.innerHTML += '<div>[' + time + 's] ' + msg + '</div>';
+    panel.scrollTop = panel.scrollHeight;
+  }
+
+  // Initial debug output
+  if (DEBUG) {
+    debugLog('session: ' + sessionId);
+    debugLog('visibility: ' + document.visibilityState);
+    debugLog('hasFocus: ' + document.hasFocus());
+    debugLog('FB webview: ' + detection.is_facebook_webview);
+    debugLog('IG webview: ' + detection.is_instagram_webview);
+    debugLog('iframe: ' + detection.is_iframe);
+    debugLog('nav type: ' + detection.navigation_type);
+    debugLog('referrer: ' + (document.referrer || 'none'));
+    debugLog('UA: ' + navigator.userAgent.substring(0, 80));
+    debugLog('viewport: ' + window.innerWidth + 'x' + window.innerHeight);
+    debugLog('---');
+  }
+
+})();
+</script>
+</body>
+</html>
