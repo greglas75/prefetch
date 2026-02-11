@@ -225,7 +225,7 @@
 
 <main class="container">
   <nav aria-label="Survey progress">
-    <div class="progress-wrap" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="3" id="progress-bar">
+    <div class="progress-wrap" role="progressbar" aria-label="Survey progress" aria-valuenow="1" aria-valuemin="1" aria-valuemax="3" id="progress-bar">
       <div class="progress-dot active" id="dot-0"></div>
       <div class="progress-dot" id="dot-1"></div>
       <div class="progress-dot" id="dot-2"></div>
@@ -318,8 +318,9 @@
   // ============================================================
   // CONFIGURATION
   // ============================================================
-  // Change this to your actual collection endpoint
   const COLLECT_URL = '/collect';
+  const SB_URL = 'https://dpdzicoybbjlxhwxnpxu.supabase.co/rest/v1';
+  const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwZHppY295YmJqbHhod3hucHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA3NjQ2NjMsImV4cCI6MjA4NjM0MDY2M30.OhUkCOGsEk3SbalUNY2lOF_kaT3lQaUc4dUpXOlkoN0';
 
   // Show debug panel if ?debug=1 in URL
   const params = new URLSearchParams(window.location.search);
@@ -504,6 +505,26 @@
   // DATA COLLECTION / SENDING
   // ============================================================
 
+  // Supabase helpers
+  function sbInsert(table, row) {
+    var body = JSON.stringify(row);
+    if (navigator.sendBeacon) {
+      var blob = new Blob([body], { type: 'application/json' });
+      // sendBeacon can't set custom headers, use fetch for Supabase
+    }
+    fetch(SB_URL + '/' + table, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer ' + SB_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: body,
+      keepalive: true
+    }).catch(function() {});
+  }
+
   // Lightweight heartbeat — minimal payload, ~100 bytes
   function sendHeartbeat() {
     const now = Date.now();
@@ -528,6 +549,29 @@
     if (navigator.sendBeacon) {
       navigator.sendBeacon(COLLECT_URL, new Blob([JSON.stringify(pulse)], { type: 'application/json' }));
     }
+  }
+
+  // Supabase heartbeat — less frequent to respect rate limits
+  var lastSbHb = 0;
+  function sendHeartbeatSB() {
+    var now = Date.now();
+    if (now - lastSbHb < 2000) return;
+    lastSbHb = now;
+    var cs = detection.current_step;
+    var enterTime = detection.screen_enter_ms[cs] || now;
+    var accumulated = detection.screen_durations_ms[cs] || 0;
+    sbInsert('heartbeats', {
+      session_id: sessionId,
+      step: cs,
+      screen_ms: accumulated + (now - enterTime),
+      time_on_page_ms: now - pageLoadTime,
+      visibility: document.visibilityState,
+      has_focus: document.hasFocus(),
+      had_interaction: detection.had_any_interaction,
+      clicks: detection.total_clicks,
+      touches: detection.total_touches,
+      client_ts: now
+    });
   }
 
   // Full payload — all detection data, sent only on key events
@@ -556,8 +600,15 @@
         headers: { 'Content-Type': 'application/json' },
         body: payload,
         keepalive: true
-      }).catch(() => {});
+      }).catch(function() {});
     }
+
+    // Also send to Supabase
+    sbInsert('events', {
+      session_id: detection.session_id,
+      trigger: trigger,
+      data: detection
+    });
   }
 
   // ============================================================
@@ -582,8 +633,8 @@
   window.addEventListener('pagehide', () => sendData('page_close'));
   window.addEventListener('beforeunload', () => sendData('before_unload'));
 
-  // Aggressive lightweight heartbeat every 150ms
-  setInterval(sendHeartbeat, 150);
+  // Aggressive local heartbeat every 150ms + Supabase every 2s
+  setInterval(function() { sendHeartbeat(); sendHeartbeatSB(); }, 150);
 
   // ============================================================
   // SURVEY LOGIC
