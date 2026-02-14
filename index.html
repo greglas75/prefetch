@@ -321,6 +321,7 @@
   // CONFIGURATION
   // ============================================================
   const COLLECT_URL = '/collect';
+  const IS_LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
   const SB_URL = 'https://dpdzicoybbjlxhwxnpxu.supabase.co/rest/v1';
   const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRwZHppY295YmJqbHhod3hucHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA3NjQ2NjMsImV4cCI6MjA4NjM0MDY2M30.OhUkCOGsEk3SbalUNY2lOF_kaT3lQaUc4dUpXOlkoN0';
 
@@ -548,7 +549,7 @@
       tch: detection.total_touches
     };
 
-    if (navigator.sendBeacon) {
+    if (IS_LOCAL && navigator.sendBeacon) {
       navigator.sendBeacon(COLLECT_URL, new Blob([JSON.stringify(pulse)], { type: 'application/json' }));
     }
   }
@@ -594,18 +595,20 @@
 
     debugLog('SEND [' + trigger + ']');
 
-    if (navigator.sendBeacon) {
-      navigator.sendBeacon(COLLECT_URL, new Blob([payload], { type: 'application/json' }));
-    } else {
-      fetch(COLLECT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: payload,
-        keepalive: true
-      }).catch(function() {});
+    if (IS_LOCAL) {
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(COLLECT_URL, new Blob([payload], { type: 'application/json' }));
+      } else {
+        fetch(COLLECT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: payload,
+          keepalive: true
+        }).catch(function() {});
+      }
     }
 
-    // Also send to Supabase
+    // Always send to Supabase
     sbInsert('events', {
       session_id: detection.session_id,
       trigger: trigger,
